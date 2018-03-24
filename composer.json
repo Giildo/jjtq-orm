@@ -1,0 +1,13 @@
+{
+    "name": "jojotique/orm",
+    "description": "ORM pour la gestion du CRUD en MySQL, en POO PHP.",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Giildo",
+            "email": "giildo.jm@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
