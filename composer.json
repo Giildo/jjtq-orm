@@ -2,7 +2,6 @@
     "name": "jojotique/orm",
     "description": "ORM pour la gestion du CRUD en MySQL, en POO PHP.",
     "license": "Apache-2.0",
-    "version": "1.0.1",
     "authors": [
         {
             "name": "Giildo",
