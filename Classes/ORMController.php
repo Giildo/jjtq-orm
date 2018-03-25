@@ -1,14 +1,9 @@
 <?php
 
-namespace Core\ORM\Classes;
+namespace Jojotique\ORM\Classes;
 
-use Core\Model\Model;
-use Core\ORM\Interfaces\ORMModelInterface;
 use DateTime;
-use DI\Container;
-use DI\DependencyException;
-use DI\NotFoundException;
-use PDO;
+use Jojotique\ORM\Interfaces\ORMModelInterface;
 
 class ORMController
 {
@@ -69,7 +64,7 @@ class ORMController
 
         $this->verifStatement($statement);
 
-        $model->ORMCreateTable($ORMTable->getTableName(), $statement);
+        $model->ORMCreateTable($ORMTable->getTableName());
     }
 
     /**

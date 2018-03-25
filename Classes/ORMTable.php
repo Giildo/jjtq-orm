@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\ORM\Classes;
+namespace Jojotique\ORM\Classes;
 
 use stdClass;
 

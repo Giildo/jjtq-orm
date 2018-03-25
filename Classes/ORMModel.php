@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\ORM\Classes;
+namespace Jojotique\ORM\Classes;
 
-use Core\ORM\Interfaces\ORMModelInterface;
+use Jojotique\ORM\Interfaces\ORMModelInterface;
 use PDO;
 
 class ORMModel implements ORMModelInterface
@@ -118,5 +118,13 @@ class ORMModel implements ORMModelInterface
         $result = $this->pdo->prepare("DELETE FROM {$entity->tableName} WHERE id=:id");
         $result->bindValue('id', $entity->id);
         $result->execute();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
     }
 }

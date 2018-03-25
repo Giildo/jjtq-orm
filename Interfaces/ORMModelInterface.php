@@ -1,6 +1,8 @@
 <?php
 
-namespace Core\ORM\Interfaces;
+namespace Jojotique\ORM\Interfaces;
+
+use Jojotique\ORM\Classes\ORMEntity;
 
 interface ORMModelInterface
 {
@@ -45,4 +47,9 @@ interface ORMModelInterface
      * @return array
      */
     public function ORMFind(string $statement, ?string $entityType = null, ?array $whereOptions = [], ?bool $inOption = false): array;
+
+    /**
+     * @param ORMEntity $entity
+     */
+    public function ORMDelete(ORMEntity $entity): void;
 }

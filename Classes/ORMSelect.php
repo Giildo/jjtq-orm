@@ -1,9 +1,8 @@
 <?php
 
-namespace Core\ORM\Classes;
+namespace Jojotique\ORM\Classes;
 
-use Core\Model\Model;
-use Core\ORM\Interfaces\ORMModelInterface;
+use Jojotique\ORM\Interfaces\ORMModelInterface;
 use stdClass;
 
 /**
@@ -581,7 +580,7 @@ class ORMSelect
     private function ormAndEntitiesCreation(array &$ormTables, array $models, array &$entities, array $entityList): void
     {
         //Crée les différents ORMTables
-        /** @var Model $model */
+        /** @var ORMModel $model */
         foreach ($models as $model) {
             $ormTable = new ORMTable($model->getTable());
             $ormTable->constructWithStdclass($model->ORMShowColumns());
