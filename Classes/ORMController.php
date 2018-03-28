@@ -206,6 +206,7 @@ class ORMController
 
         foreach ($columnsEntity as $columnEntity) {
             $typeArray = [];
+            $nullable = false;
 
             foreach ($columnsBDD as $columnTable) {
                 if (strtolower($columnTable->Field) === strtolower($columnEntity)) {
@@ -216,6 +217,10 @@ class ORMController
                     if ($columnTable->Key === 'MUL') {
                         $columnEntity = $columnEntity . 'Id';
                     }
+
+                    if ($columnTable->Null === 'YES') {
+                        $nullable = true;
+                    }
                     break;
                 }
             }
@@ -225,7 +230,9 @@ class ORMController
                 //Vérifie la valeur, si OK la renvoie en forçant le type (par sécurité) et en échappant les caractères HTML (sécurité pour les string)
                 $result = $this->verifValue($typeArray, $entity->$columnEntity, $columnEntity);
 
-                if (is_null($result)) {
+                if ($nullable && is_null($result)) {
+                    $values[] = null;
+                } elseif (is_null($result)) {
                     throw new ORMException("La valeur de la colonne \"{$columnEntity}\" ne correspond pas au type inscrit dans la base de données");
                 } else {
                     $values[] = $result;
