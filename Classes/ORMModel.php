@@ -104,7 +104,7 @@ class ORMModel implements ORMModelInterface
                         $result->bindValue($key2, $value);
                     }
                 } else {
-                    $result->bindParam($key, $values);
+                    $result->bindValue($key, $values);
                 }
             }
         }
@@ -117,6 +117,26 @@ class ORMModel implements ORMModelInterface
     {
         $result = $this->pdo->prepare("DELETE FROM {$entity->tableName} WHERE id=:id");
         $result->bindValue('id', $entity->id);
+        $result->execute();
+    }
+
+    public function ORMDeleteJointsTables(string $tableName, array $columns, array $values): void
+    {
+        $parentValue = $childValue = null;
+        $parentColumn = $childColumn = null;
+        foreach ($values as $parent => $child) {
+            $parentValue = (int)$parent;
+            $childValue = (int)$child;
+        }
+
+        foreach ($columns as $parent => $child) {
+            $parentColumn = $parent;
+            $childColumn = $child;
+        }
+
+        $result = $this->pdo->prepare("DELETE FROM {$tableName} WHERE {$parentColumn} = :{$parentColumn} AND {$childColumn} = :{$childColumn}");
+        $result->bindValue($parentColumn, $parentValue);
+        $result->bindValue($childColumn, $childValue);
         $result->execute();
     }
 

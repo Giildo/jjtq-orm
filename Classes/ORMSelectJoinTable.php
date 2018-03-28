@@ -5,62 +5,104 @@ namespace Jojotique\ORM\Classes;
 class ORMSelectJoinTable
 {
     /**
-     * @var string
-     */
-    private $configFiles;
-
-    /**
-     * @var string
-     */
-    private $parentTable;
-
-    /**
-     * @var string
-     */
-    private $childTable;
-
-    /**
      * @var ORMModel
      */
     private $ORMModel;
 
     /**
      * ORMSelectJoinTable constructor.
-     * @param string $configFiles
      * @param ORMModel $ORMModel
      */
-    public function __construct(string $configFiles, ORMModel $ORMModel)
+    public function __construct(ORMModel $ORMModel)
     {
-        $this->configFiles = $configFiles;
         $this->ORMModel = $ORMModel;
     }
 
-    public function select(array $tables): void
+    /**
+     * @param array $tables
+     * @param string $parentColumn
+     * @param int $parentValue
+     * @return array
+     */
+    public function select(array $tables, string $parentColumn, int $parentValue): array
     {
-        foreach ($tables as $parentTable => $childTable) {
-            $this->parentTable = $parentTable;
-            $this->childTable = $childTable;
+        $parentTable = $childTable = null;
+        foreach ($tables as $parent => $child) {
+            $parentTable = $parent;
+            $childTable = $child;
         }
+
+        $table = $parentTable . ucfirst($childTable);
+        return $this->ORMModel->ORMFind(
+            "SELECT * FROM {$table} WHERE {$parentColumn} = :{$parentColumn}",
+            \stdClass::class, [$parentColumn => $parentValue]
+        );
     }
 
     /**
+     * @param array $tables
+     * @param array $columns
      * @param array $values
      * @return bool
      */
-    public function jointExists(array $values): bool
+    public function jointExists(array $tables, array $columns, array $values): bool
     {
         $parentValue = $childValue = null;
+        $parentTable = $childTable = null;
+        $parentColumn = $childColumn = null;
         foreach ($values as $parent => $child) {
-            $parentValue = $parent;
-            $childValue = $child;
+            $parentValue = (int)$parent;
+            $childValue = (int)$child;
         }
 
-        $table = $this->parentTable . ucfirst($this->childTable);
-        $tableParentId = substr($this->parentTable, 0, -1) . 'Id';
-        $tableChildId = substr($this->childTable, 0, -1) . 'Id';
-        $results = $this->ORMModel->ORMFind("SELECT * FROM {$table} WHERE {$tableParentId} = :{$tableParentId} AND {$tableChildId} = :{$tableChildId}",
-            '', [$tableChildId => $childValue, $tableParentId => $parentValue]);
+        foreach ($tables as $parent => $child) {
+            $parentTable = $parent;
+            $childTable = $child;
+        }
 
-        return true;
+        foreach ($columns as $parent => $child) {
+            $parentColumn = $parent;
+            $childColumn = $child;
+        }
+
+        $table = $parentTable . ucfirst($childTable);
+        $results = $this->ORMModel->ORMFind(
+            "SELECT * FROM {$table} WHERE {$parentColumn} = :{$parentColumn} AND {$childColumn} = :{$childColumn}",
+            '', [$parentColumn => $parentValue, $childColumn => $childValue]
+        );
+
+        return (empty($results)) ? false : true;
+    }
+
+    /**
+     * @param array $tables
+     * @param array $values
+     */
+    public function save(array $tables, array $values): void
+    {
+        $parentValue = $childValue = null;
+        $parentTable = $childTable = null;
+        foreach ($values as $parent => $child) {
+            $parentValue = (int)$parent;
+            $childValue = (int)$child;
+        }
+
+        foreach ($tables as $parent => $child) {
+            $parentTable = $parent;
+            $childTable = $child;
+        }
+
+        $table = $parentTable . ucfirst($childTable);
+        $this->ORMModel->ORMInsert("INSERT INTO {$table} VALUES ($parentValue, $childValue)");
+    }
+
+    public function delete(array $tables, array $columns, array $values)
+    {
+        $table = null;
+        foreach ($tables as $parent => $child) {
+            $table = $parent . ucfirst($child);
+        }
+
+        $this->ORMModel->ORMDeleteJointsTables($table, $columns, $values);
     }
 }
