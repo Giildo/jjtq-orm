@@ -56,8 +56,8 @@ class ORMSelectJoinTable
         }
 
         $table = $this->parentTable . ucfirst($this->childTable);
-        $tableParentId = $this->parentTable . 'Id';
-        $tableChildId = $this->childTable . 'Id';
+        $tableParentId = substr($this->parentTable, 0, -1) . 'Id';
+        $tableChildId = substr($this->childTable, 0, -1) . 'Id';
         $results = $this->ORMModel->ORMFind("SELECT * FROM {$table} WHERE {$tableParentId} = :{$tableParentId} AND {$tableChildId} = :{$tableChildId}",
             '', [$tableChildId => $childValue, $tableParentId => $parentValue]);
 
